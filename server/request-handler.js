@@ -52,8 +52,8 @@ var requestHandler = function(request, response) {
 
 
       request.on('data', function(data) {
-        console.log('request: ', data.toString());
-        storage.push(data.toString());
+        //console.log('request: ', data.toString());
+        storage.push(JSON.parse(data.toString()));
         console.log(storage);
       });
 
@@ -98,7 +98,7 @@ var requestHandler = function(request, response) {
 
 
   resp = JSON.stringify(resp);
-
+  console.log('resp: ', resp);
   response.end(resp);
 
 
