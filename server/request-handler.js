@@ -106,4 +106,4 @@ var requestHandler = function(request, response) {
 };
 
 
-exports.ourFunction = requestHandler;
+exports.requestHandler = requestHandler;
