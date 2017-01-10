@@ -63,17 +63,23 @@ var app = {
       data: { order: '-createdAt' },
       contentType: 'application/json',
       success: function(data) {
+        data = JSON.parse(data);
+        console.log('data: ', data);
+        console.log('data.results: ', data.results);
+        console.log('data.results.length: ', data.results.length);
         // Don't bother if we have nothing to work with
-        if (!data.results || !data.results.length) { return; }
+        if (!data.results || !data.results.length) { console.log('Spot 1'); return; }
 
         // Store messages for caching later
         app.messages = data.results;
 
         // Get the last message
         var mostRecentMessage = data.results[data.results.length - 1];
-
+        console.log('mostRecentMessage.objectId: ', mostRecentMessage.objectId); 
+        console.log('app.lastMessageId: ', app.lastMessageId); 
         // Only bother updating the DOM if we have a new message
         if (mostRecentMessage.objectId !== app.lastMessageId) {
+          console.log('Spot 2'); 
           // Update the UI with the fetched rooms
           app.renderRoomList(data.results);
 

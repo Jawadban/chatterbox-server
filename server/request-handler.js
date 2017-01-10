@@ -28,6 +28,8 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
+// var storage = [ { username: 'Jono', text: 'Do my bidding!', roomname: 'lobby', objectId: '1123bh1' },
+//   { username: 'Jono', text: 'Do my bidding!', roomname: 'lobby', objectId: '234gsgags'} ];
 var storage = [];
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
@@ -45,20 +47,27 @@ var requestHandler = function(request, response) {
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
-
-  if (request.url === '/classes/messages') {
+  // See the note below about CORS headers.
+  var headers = defaultCorsHeaders;
+  var messageURL = request.url;
+  //messageURL.includes('/classes/messages/'
+  //if (request.url === '/classes/messages') {
+  if (messageURL.includes('/classes/messages')) {
     if (request.method === 'POST') {
-      var statusCode = 201;  
-
+      var statusCode = 201; 
 
       request.on('data', function(data) {
         //console.log('request: ', data.toString());
-        storage.push(JSON.parse(data.toString()));
+
+        var ourData = JSON.parse(data.toString());
+        ourData.objectId = Math.floor((Math.random() * 1000) + 1);
+
+        storage.push(ourData);
         console.log(storage);
       });
-
-
     } else if (request.method === 'GET') {
+      var statusCode = 200;
+    } else if (request.method === 'OPTIONS') {
       var statusCode = 200;
     } 
   } else {  
@@ -66,21 +75,19 @@ var requestHandler = function(request, response) {
   }
   // The outgoing status.
   
-  // See the note below about CORS headers.
-  var headers = defaultCorsHeaders;
 
   // Tell the client we are sending them plain text.
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = 'JSON';
+  //headers['Content-Type'] = 'JSON';
 
   var resp = { 
     results: storage
  
   };
 
-
+  console.log(headers, statusCode);
   // }
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
