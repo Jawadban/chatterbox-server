@@ -28,6 +28,7 @@ var app = {
     // Fetch previous messages
     app.startSpinner();
     app.fetch(false);
+    app.stopSpinner();
 
     // Poll for new messages
     setInterval(function() {
