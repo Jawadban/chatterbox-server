@@ -28,6 +28,7 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
+var storage = [];
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
   //
@@ -45,9 +46,26 @@ var requestHandler = function(request, response) {
   // console.logs in your code.
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
 
-  // The outgoing status.
-  var statusCode = 200;
+  if (request.url === '/classes/messages') {
+    if (request.method === 'POST') {
+      var statusCode = 201;  
 
+
+      request.on('data', function(data) {
+        console.log('request: ', data.toString());
+        storage.push(data.toString());
+        console.log(storage);
+      });
+
+
+    } else if (request.method === 'GET') {
+      var statusCode = 200;
+    } 
+  } else {  
+    var statusCode = 404;
+  }
+  // The outgoing status.
+  
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
 
@@ -58,18 +76,12 @@ var requestHandler = function(request, response) {
   headers['Content-Type'] = 'JSON';
 
   var resp = { 
-    results: []
+    results: storage
+ 
   };
 
-  if (request.method === 'POST' && request.url === '/classes/messages') {
-    statusCode = 201;
-    resp = { 
-      results: [], 
-      asdf: []
-    };
-  }
 
-
+  // }
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
   response.writeHead(statusCode, headers);
@@ -88,6 +100,9 @@ var requestHandler = function(request, response) {
   resp = JSON.stringify(resp);
 
   response.end(resp);
+
+
+
 };
 
 
